@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DropShip E-Commerce</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        #welcome-message {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            font-size: 16px;
+        }
+        nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #333;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .banner {
+            background: #eee;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .slider {
+            font-size: 24px;
+            margin: 10px 0;
+            transition: transform 0.5s ease;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            background: white;
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .product-details {
+            padding: 20px;
+        }
+        .product-details img {
+            max-width: 500px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            margin: auto;
+        }
+        input, textarea, select {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .hidden {
+            display: none;
+        }
+        .trust-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .faq, .policy {
+            margin: 20px 0;
+        }
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25D366;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            text-decoration: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .analytics {
+            margin-top: 20px;
+        }
+        .toggle-link {
+            color: #4CAF50;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
+        .out-of-stock {
+            color: red;
+            font-weight: bold;
+        }
+        #offers-form {
+            margin-bottom: 20px;
+        }
+        #admin-offers {
+            margin-bottom: 20px;
+        }
+        #wishlist-items {
+            margin-top: 20px;
+        }
+        #reviews-section {
+            margin-top: 20px;
+        }
+        #live-chat {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>DropShip E-Commerce</h1>
+    <span id="welcome-message" class="hidden"></span>
+</header>
+
+<nav>
+    <a onclick="showSection('home')">Home</a>
+    <a onclick="showSection('catalog')">Catalog</a>
+    <a onclick="showSection('cart')">Cart</a>
+    <a onclick="showSection('wishlist')">Wishlist</a>
+    <a onclick="showSection('contact')">Contact</a>
+    <a onclick="showSection('login')" id="login-link">Login</a>
+    <a onclick="showSection('my-orders')" id="my-orders-link" class="hidden">My Orders</a>
+    <a onclick="showSection('change-password')" id="change-password-link" class="hidden">Change Password</a>
+    <a onclick="showSection('admin')" id="admin-link" class="hidden">Admin</a>
+    <a onclick="logout()" id="logout" class="hidden">Logout</a>
+</nav>
+
+<div id="notification"></div>
+
+<!-- Homepage -->
+<section id="home" class="container">
+    <div class="banner">
+        <div id="slider-container" class="slider"></div>
+    </div>
+    <h2>Featured Products</h2>
+    <div class="filters">
+        <input type="text" id="search-filter" placeholder="Search products...">
+        <select id="category-filter">
+            <option value="all">All Categories</option>
+        </select>
+        <select id="price-filter">
+            <option value="all">All Prices</option>
+            <option value="0-1000">₹0 - ₹1000</option>
+            <option value="1000-5000">₹1000 - ₹5000</option>
+            <option value="5000+">₹5000+</option>
+        </select>
+    </div>
+    <div id="featured-products" class="products-grid"></div>
+</section>
+
+<!-- Product Catalog -->
+<section id="catalog" class="container hidden">
+    <h2>Product Catalog</h2>
+    <div class="filters">
+        <input type="text" id="catalog-search-filter" placeholder="Search products...">
+        <select id="catalog-category-filter">
+            <option value="all">All Categories</option>
+        </select>
+        <select id="catalog-price-filter">
+            <option value="all">All Prices</option>
+            <option value="0-1000">₹0 - ₹1000</option>
+            <option value="1000-5000">₹1000 - ₹5000</option>
+            <option value="5000+">₹5000+</option>
+        </select>
+    </div>
+    <div id="products" class="products-grid"></div>
+</section>
+
+<!-- Product Page -->
+<section id="product-page" class="container hidden">
+    <div class="product-details">
+        <h2 id="product-title"></h2>
+        <img id="product-image" src="" alt="Product Image">
+        <p id="product-price"></p>
+        <p id="product-stock"></p>
+        <p id="product-desc"></p>
+        <button id="add-to-cart">Add to Cart</button>
+        <button id="buy-now">Buy Now</button>
+        <button id="add-to-wishlist">Add to Wishlist</button>
+        <div id="reviews-section">
+            <h3>Reviews</h3>
+            <div id="product-reviews"></div>
+            <form id="review-form">
+                <textarea id="review-text" placeholder="Write a review..." required></textarea>
+                <button type="submit">Submit Review</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Cart / Checkout -->
+<section id="cart" class="container hidden">
+    <h2>Cart</h2>
+    <div id="cart-items"></div>
+    <div id="order-summary"></div>
+    <form id="checkout-form" class="hidden">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="tel" id="phone" placeholder="Phone" required>
+        <input type="text" id="address" placeholder="Address" required>
+        <input type="text" id="pincode" placeholder="Pincode" required>
+        <label>Payment Method:</label>
+        <input type="radio" name="payment" value="upi" checked> UPI
+        <input type="radio" name="payment" value="cod"> COD
+        <div id="upi-details" class="hidden">
+            <p>UPI ID: 6304538290@ybl (Copy: <button id="copy-upi">Copy</button>)</p>
+            <img id="upi-qr" src="" alt="UPI QR Code">
+            <input type="text" id="transaction-id" placeholder="Enter UPI Transaction ID" required>
+        </div>
+        <div id="captcha-section">
+            <p id="captcha-question"></p>
+            <input type="text" id="captcha-answer" placeholder="Enter answer" required>
+        </div>
+        <button type="submit">Place Order</button>
+    </form>
+</section>
+
+<!-- Wishlist -->
+<section id="wishlist" class="container hidden">
+    <h2>Wishlist</h2>
+    <div id="wishlist-items"></div>
+</section>
+
+<!-- Order Confirmation -->
+<section id="confirmation" class="container hidden">
+    <h2>Order Placed Successfully!</h2>
+    <p id="order-details"></p>
+    <a href="https://wa.me/916304538290?text=Order%20Confirmation" class="whatsapp-btn">Confirm via WhatsApp</a>
+</section>
+
+<!-- Contact / Support -->
+<section id="contact" class="container hidden">
+    <h2>Contact Us</h2>
+    <form id="contact-form">
+        <input type="text" id="contact-name" placeholder="Name" required>
+        <input type="email" id="contact-email" placeholder="Email" required>
+        <textarea id="contact-message" placeholder="Message" required></textarea>
+        <button type="submit">Send</button>
+    </form>
+    <a href="https://wa.me/916304538290" class="whatsapp-btn">Chat on WhatsApp</a>
+</section>
+
+<!-- Trust Builders -->
+<section class="trust-section container">
+    <h3>Reviews & Testimonials</h3>
+    <p>"Great products and fast delivery!" - Customer</p>
+    <img src="https://images.unsplash.com/photo-1516321310766-61f6f8c0b51f" alt="COD Available" width="100">
+    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d" alt="Secure Payment" width="100">
+    <div class="faq">
+        <h3>FAQ</h3>
+        <p>Q: How to return? A: Contact us within 7 days.</p>
+    </div>
+    <div class="policy">
+        <h3>Refund & Return Policy</h3>
+        <p>Returns accepted within 7 days.</p>
+    </div>
+</section>
+
+<!-- Login -->
+<section id="login" class="container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p class="toggle-link" onclick="showSection('signup')">Don't have an account? Sign up</p>
+</section>
+
+<!-- Signup -->
+<section id="signup" class="container hidden">
+    <h2>Signup</h2>
+    <form id="signup-form">
+        <input type="text" id="signup-name" placeholder="Name" required>
+        <input type="email" id="signup-email" placeholder="Email" required>
+        <input type="tel" id="signup-phone" placeholder="Phone Number" required>
+        <input type="password" id="signup-password" placeholder="Password" required>
+        <button type="submit">Signup</button>
+    </form>
+    <p class="toggle-link" onclick="showSection('login')">Already have an account? Login</p>
+</section>
+
+<!-- Change Password -->
+<section id="change-password" class="container hidden">
+    <h2>Change Password</h2>
+    <form id="change-password-form">
+        <input type="password" id="current-password" placeholder="Current Password" required>
+        <input type="password" id="new-password" placeholder="New Password" required>
+        <button type="submit">Change Password</button>
+    </form>
+</section>
+
+<!-- My Orders -->
+<section id="my-orders" class="container hidden">
+    <h2>My Orders</h2>
+    <table id="user-orders-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Transaction ID</th>
+                <th>Status</th>
+                <th>Logistics</th>
+                <th>Tracking ID</th>
+                <th>Cancel Remarks</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<!-- Admin Panel -->
+<section id="admin" class="container hidden">
+    <h2>Admin Dashboard</h2>
+    <!-- Product Management -->
+    <h3>Product Management</h3>
+    <form id="product-form">
+        <input type="text" id="prod-title" placeholder="Title" required>
+        <input type="number" id="prod-price" placeholder="Price (INR)" required>
+        <input type="file" id="prod-image" accept="image/*" required>
+        <textarea id="prod-desc" placeholder="Description" required></textarea>
+        <input type="text" id="prod-category" placeholder="Category" required>
+        <input type="number" id="prod-stock" placeholder="Stock" required>
+        <input type="number" id="prod-shipping" placeholder="Shipping Charge (INR)" required>
+        <button type="submit">Add Product</button>
+    </form>
+    <div class="filters">
+        <input type="text" id="admin-product-search" placeholder="Search products...">
+    </div>
+    <div id="admin-products"></div>
+
+    <!-- Offers Management -->
+    <h3>Offers Management</h3>
+    <form id="offers-form">
+        <input type="text" id="offer-title" placeholder="Offer Title" required>
+        <textarea id="offer-desc" placeholder="Offer Description" required></textarea>
+        <input type="file" id="offer-image" accept="image/*" required>
+        <input type="text" id="offer-user-email" placeholder="User Email (optional for particular user)">
+        <button type="submit">Add Offer</button>
+    </form>
+    <div id="admin-offers"></div>
+
+    <!-- Order Management -->
+    <h3>Orders</h3>
+    <div class="filters">
+        <select id="order-status-filter">
+            <option value="all">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+        <input type="date" id="order-date-filter" placeholder="Filter by Date">
+    </div>
+    <table id="orders-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Pincode</th>
+                <th>Items</th>
+                <th>Payment</th>
+                <th>Transaction ID</th>
+                <th>Status</th>
+                <th>Logistics</th>
+                <th>Tracking ID</th>
+                <th>Cancel Remarks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="export-orders">Export to CSV</button>
+
+    <!-- User Management -->
+    <h3>Users</h3>
+    <div class="filters">
+        <input type="text" id="user-search-filter" placeholder="Search users...">
+    </div>
+    <table id="users-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Password</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="export-users">Export to CSV</button>
+
+    <!-- Analytics -->
+    <h3>Analytics</h3>
+    <div class="analytics">
+        <p id="daily-sales"></p>
+        <p id="weekly-sales"></p>
+        <h4>Best-Selling Products</h4>
+        <ul id="best-sellers"></ul>
+    </div>
+</section>
+
+<div id="live-chat" onclick="toggleLiveChat()">Live Chat Support</div>
+
+<script>
+    // JavaScript for functionality (all client-side with localStorage)
+
+    // Data Storage
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let offers = JSON.parse(localStorage.getItem('offers')) || [];
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    let reviews = JSON.parse(localStorage.getItem('reviews')) || {};
+    let currentUser = null;
+    let isAdmin = false;
+    let chatOpen = false;
+
+    // Default Admin
+    if (!users.some(u => u.email === 'admin@dropship.com')) {
+        users.push({
+            name: 'Umesh Desaboina',
+            email: 'admin@dropship.com',
+            phone: '6304538290',
+            password: '12345',
+            isAdmin: true
+        });
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    // Sample Products with Valid Unsplash Images
+    if (products.length === 0) {
+        products = [
+            {
+                id: 1,
+                title: 'Wireless Headphones',
+                price: 2999,
+                image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
+                desc: 'High-quality wireless headphones with noise cancellation.',
+                category: 'Electronics',
+                stock: 10,
+                shipping: 50
+            },
+            {
+                id: 2,
+                title: 'Cotton T-Shirt',
+                price: 799,
+                image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab',
+                desc: 'Comfortable cotton t-shirt for casual wear.',
+                category: 'Clothing',
+                stock: 15,
+                shipping: 30
+            },
+            {
+                id: 3,
+                title: 'Smart Watch',
+                price: 5999,
+                image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12',
+                desc: 'Feature-packed smart watch with fitness tracking.',
+                category: 'Electronics',
+                stock: 8,
+                shipping: 40
+            }
+        ];
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+
+    // Generate Captcha
+    function generateCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('captcha-question').textContent = `What is ${num1} + ${num2}?`;
+        return num1 + num2;
+    }
+
+    let currentCaptchaAnswer = generateCaptcha();
+
+    // Populate Categories
+    function populateCategories(selectId) {
+        const categories = [...new Set(products.map(p => p.category))];
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="all">All Categories</option>';
+        categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            select.appendChild(option);
+        });
+    }
+
+    // Filter Products
+    function filterProducts(products, search, category, priceRange) {
+        let filtered = products;
+        if (search) {
+            filtered = filtered.filter(p => p.title.toLowerCase().includes(search.toLowerCase()));
+        }
+        if (category !== 'all') {
+            filtered = filtered.filter(p => p.category === category);
+        }
+        if (priceRange !== 'all') {
+            const [min, max] = priceRange.split('-').map(Number);
+            if (priceRange === '5000+') {
+                filtered = filtered.filter(p => p.price >= 5000);
+            } else {
+                filtered = filtered.filter(p => p.price >= min && p.price < (max || Infinity));
+            }
+        }
+        return filtered;
+    }
+
+    // Display Products
+    function displayProducts(containerId, search = '', category = 'all', priceRange = 'all') {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        const filteredProducts = filterProducts(products, search, category, priceRange);
+        filteredProducts.forEach(product => {
+            const card = document.createElement('div');
+            card.classList.add('product-card');
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.title}" onerror="this.src='https://images.unsplash.com/photo-1501426026826-31c667bdf23d'">
+                <h3>${product.title}</h3>
+                <p>₹${product.price}</p>
+                <p>${product.stock > 0 ? `Stock: ${product.stock}` : '<span class="out-of-stock">Out of Stock</span>'}</p>
+                <p>${product.desc.substring(0, 50)}...</p>
+                <button onclick="viewProduct(${product.id})">View Details</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // View Product
+    function viewProduct(id) {
+        const product = products.find(p => p.id === id);
+        if (product) {
+            document.getElementById('product-title').textContent = product.title;
+            document.getElementById('product-image').src = product.image;
+            document.getElementById('product-image').onerror = () => {
+                document.getElementById('product-image').src = 'https://images.unsplash.com/photo-1501426026826-31c667bdf23d';
+            };
+            document.getElementById('product-price').textContent = `₹${product.price}`;
+            document.getElementById('product-stock').innerHTML = product.stock > 0 ? `Stock: ${product.stock}` : '<span class="out-of-stock">Out of Stock</span>';
+            document.getElementById('product-desc').textContent = product.desc;
+            document.getElementById('add-to-cart').disabled = product.stock === 0;
+            document.getElementById('buy-now').disabled = product.stock === 0;
+            document.getElementById('add-to-wishlist').disabled = product.stock === 0;
+            showSection('product-page');
+            document.getElementById('add-to-cart').onclick = () => {
+                if (product.stock > 0) addToCart(product);
+            };
+            document.getElementById('buy-now').onclick = () => {
+                if (product.stock > 0) {
+                    cart = [{...product, quantity: 1}];
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    showCheckout();
+                    displayCart();
+                } else {
+                    alert('Out of stock!');
+                }
+            };
+            document.getElementById('add-to-wishlist').onclick = () => {
+                if (product.stock > 0 && !wishlist.some(item => item.id === product.id)) {
+                    wishlist.push({...product});
+                    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+                    alert('Added to wishlist!');
+                    displayWishlist();
+                } else if (wishlist.some(item => item.id === product.id)) {
+                    alert('Already in wishlist!');
+                }
+            };
+            displayReviews(id);
+        }
+    }
+
+    // Add to Cart
+    function addToCart(product) {
+        if (product.stock > 0) {
+            const existing = cart.find(item => item.id === product.id);
+            if (existing) {
+                if (product.stock >= existing.quantity + 1) {
+                    existing.quantity += 1;
+                    alert('Added to cart!');
+                } else {
+                    alert('Not enough stock!');
+                }
+            } else {
+                cart.push({...product, quantity: 1});
+                alert('Added to cart!');
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+        } else {
+            alert('Out of stock!');
+        }
+    }
+
+    // Display Cart
+    function displayCart() {
+        const container = document.getElementById('cart-items');
+        container.innerHTML = '';
+        let total = 0;
+        let shippingTotal = 0;
+        if (cart.length === 0) {
+            container.textContent = 'Your cart is empty.';
+            document.getElementById('checkout-form').classList.add('hidden');
+            document.getElementById('order-summary').innerHTML = '';
+            return;
+        }
+        cart.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.innerHTML = `${item.title} - ₹${item.price} x ${item.quantity} (Shipping: ₹${item.shipping * item.quantity}) <button onclick="removeFromCart(${index})">Remove</button>`;
+            container.appendChild(div);
+            total += item.price * item.quantity;
+            shippingTotal += item.shipping * item.quantity;
+        });
+        const grandTotal = total + shippingTotal;
+        document.getElementById('order-summary').innerHTML = `Subtotal: ₹${total} + Shipping: ₹${shippingTotal} = Total: ₹${grandTotal}`;
+        document.getElementById('checkout-form').classList.remove('hidden');
+        document.getElementById('upi-details').classList.toggle('hidden', document.querySelector('input[name="payment"]:checked').value !== 'upi');
+        if (document.querySelector('input[name="payment"]:checked').value === 'upi') {
+            const upiData = `upi://pay?pa=6304538290@ybl&pn=Umesh&am=${grandTotal}&cu=INR`;
+            document.getElementById('upi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(upiData)}&size=200x200`;
+            document.getElementById('transaction-id').classList.remove('hidden');
+        } else {
+            document.getElementById('transaction-id').classList.add('hidden');
+        }
+        currentCaptchaAnswer = generateCaptcha();
+    }
+
+    // Remove from Cart
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCart();
+    }
+
+    // Display Wishlist
+    function displayWishlist() {
+        const container = document.getElementById('wishlist-items');
+        container.innerHTML = '';
+        if (wishlist.length === 0) {
+            container.textContent = 'Your wishlist is empty.';
+            return;
+        }
+        wishlist.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.innerHTML = `${item.title} - ₹${item.price} <button onclick="removeFromWishlist(${index})">Remove</button> <button onclick="addToCartFromWishlist(${index})">Add to Cart</button>`;
+            container.appendChild(div);
+        });
+    }
+
+    // Remove from Wishlist
+    function removeFromWishlist(index) {
+        wishlist.splice(index, 1);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        displayWishlist();
+    }
+
+    // Add to Cart from Wishlist
+    function addToCartFromWishlist(index) {
+        const item = wishlist[index];
+        addToCart(item);
+        removeFromWishlist(index);
+    }
+
+    // Show Checkout
+    function showCheckout() {
+        if (currentUser) {
+            document.getElementById('name').value = currentUser.name;
+            document.getElementById('email').value = currentUser.email;
+            document.getElementById('phone').value = currentUser.phone;
+        }
+        showSection('cart');
+        displayCart();
+    }
+
+    // Place Order
+    document.getElementById('checkout-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const captchaInput = parseInt(document.getElementById('captcha-answer').value);
+        if (captchaInput !== currentCaptchaAnswer) {
+            alert('Incorrect captcha answer!');
+            currentCaptchaAnswer = generateCaptcha();
+            return;
+        }
+        let canPlace = true;
+        cart.forEach(item => {
+            const prod = products.find(p => p.id === item.id);
+            if (prod.stock < item.quantity) {
+                canPlace = false;
+                alert(`${item.title} has insufficient stock!`);
+            }
+        });
+        if (canPlace) {
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            const transactionId = paymentMethod === 'upi' ? document.getElementById('transaction-id').value : 'N/A';
+            const order = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                customer: {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    pincode: document.getElementById('pincode').value
+                },
+                items: cart.map(item => ({...item})),
+                payment: paymentMethod,
+                transactionId: transactionId,
+                status: 'Pending',
+                logistics: '',
+                trackingId: '',
+                cancelRemarks: ''
+            };
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            // Update Stock
+            cart.forEach(item => {
+                const prod = products.find(p => p.id === item.id);
+                prod.stock -= item.quantity;
+            });
+            localStorage.setItem('products', JSON.stringify(products));
+
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.getElementById('order-details').textContent = `Order ID: ${order.id}, Transaction ID: ${order.transactionId}`;
+            showSection('confirmation');
+            currentCaptchaAnswer = generateCaptcha();
+            displayUserOrders();
+            displayOrders();
+            alert('Order placed!');
+            showNotification('Order placed successfully!');
+        }
+    });
+
+    // Contact Form
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Message sent!');
+        document.getElementById('contact-form').reset();
+    });
+
+    // Signup
+    document.getElementById('signup-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const user = {
+            name: document.getElementById('signup-name').value,
+            email: document.getElementById('signup-email').value,
+            phone: document.getElementById('signup-phone').value,
+            password: document.getElementById('signup-password').value,
+            isAdmin: false
+        };
+        if (!users.some(u => u.email === user.email)) {
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Signed up successfully!');
+            document.getElementById('signup-form').reset();
+            showSection('login');
+        } else {
+            alert('Email already exists!');
+        }
+    });
+
+    // Login
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const user = users.find(u => u.email === email && u.password === password);
+        if (user) {
+            currentUser = user;
+            isAdmin = user.isAdmin || false;
+            document.getElementById('admin-link').classList.toggle('hidden', !isAdmin);
+            document.getElementById('my-orders-link').classList.remove('hidden');
+            document.getElementById('change-password-link').classList.remove('hidden');
+            document.getElementById('logout').classList.remove('hidden');
+            document.getElementById('login-link').classList.add('hidden');
+            document.getElementById('welcome-message').classList.remove('hidden');
+            document.getElementById('welcome-message').textContent = `Welcome, ${user.name}`;
+            showSection('home');
+            alert('Logged in successfully!');
+            document.getElementById('login-form').reset();
+            displaySlider();
+        } else {
+            alert('Invalid credentials');
+        }
+    });
+
+    // Change Password
+    document.getElementById('change-password-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        if (currentUser && currentUser.password === currentPassword) {
+            const user = users.find(u => u.email === currentUser.email);
+            user.password = newPassword;
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Password changed successfully!');
+            document.getElementById('change-password-form').reset();
+            showSection('home');
+        } else {
+            alert('Current password is incorrect!');
+        }
+    });
+
+    // Logout
+    function logout() {
+        currentUser = null;
+        isAdmin = false;
+        document.getElementById('admin-link').classList.add('hidden');
+        document.getElementById('my-orders-link').classList.add('hidden');
+        document.getElementById('change-password-link').classList.add('hidden');
+        document.getElementById('logout').classList.add('hidden');
+        document.getElementById('login-link').classList.remove('hidden');
+        document.getElementById('welcome-message').classList.add('hidden');
+        showSection('home');
+        alert('Logged out!');
+    }
+
+    // Admin: Add Product
+    document.getElementById('product-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const file = document.getElementById('prod-image').files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                const product = {
+                    id: Date.now(),
+                    title: document.getElementById('prod-title').value,
+                    price: parseFloat(document.getElementById('prod-price').value),
+                    image: base64,
+                    desc: document.getElementById('prod-desc').value,
+                    category: document.getElementById('prod-category').value,
+                    stock: parseInt(document.getElementById('prod-stock').value),
+                    shipping: parseInt(document.getElementById('prod-shipping').value)
+                };
+                products.push(product);
+                localStorage.setItem('products', JSON.stringify(products));
+                displayAdminProducts();
+                populateCategories('category-filter');
+                populateCategories('catalog-category-filter');
+                displayProducts('featured-products');
+                displayProducts('products');
+                document.getElementById('product-form').reset();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('Please upload an image.');
+        }
+    });
+
+    // Display Admin Products
+    function displayAdminProducts(search = '') {
+        const container = document.getElementById('admin-products');
+        container.innerHTML = '';
+        let filteredProducts = products;
+        if (search) {
+            filteredProducts = filteredProducts.filter(p => p.title.toLowerCase().includes(search.toLowerCase()));
+        }
+        filteredProducts.forEach(p => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                ${p.title} (Stock: ${p.stock}, Shipping: ₹${p.shipping}) 
+                <button onclick="editProduct(${p.id})">Edit</button> 
+                <button onclick="deleteProduct(${p.id})">Delete</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Edit Product
+    function editProduct(id) {
+        const product = products.find(p => p.id === id);
+        if (product) {
+            product.title = prompt('New Title', product.title) || product.title;
+            product.price = parseFloat(prompt('New Price (INR)', product.price)) || product.price;
+            product.desc = prompt('New Description', product.desc) || product.desc;
+            product.category = prompt('New Category', product.category) || product.category;
+            product.stock = parseInt(prompt('New Stock', product.stock)) || product.stock;
+            product.shipping = parseInt(prompt('New Shipping Charge (INR)', product.shipping)) || product.shipping;
+            product.image = prompt('New Image URL', product.image) || product.image;
+            localStorage.setItem('products', JSON.stringify(products));
+            displayAdminProducts();
+            displayProducts('featured-products');
+            displayProducts('products');
+        }
+    }
+
+    // Delete Product
+    function deleteProduct(id) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('products', JSON.stringify(products));
+        displayAdminProducts();
+        displayProducts('featured-products');
+        displayProducts('products');
+    }
+
+    // Admin: Add Offer
+    document.getElementById('offers-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const file = document.getElementById('offer-image').files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                const offer = {
+                    id: Date.now(),
+                    title: document.getElementById('offer-title').value,
+                    desc: document.getElementById('offer-desc').value,
+                    image: base64,
+                    userEmail: document.getElementById('offer-user-email').value || 'all'
+                };
+                offers.push(offer);
+                localStorage.setItem('offers', JSON.stringify(offers));
+                displayAdminOffers();
+                displaySlider();
+                document.getElementById('offers-form').reset();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('Please upload an image.');
+        }
+    });
+
+    // Display Admin Offers
+    function displayAdminOffers() {
+        const container = document.getElementById('admin-offers');
+        container.innerHTML = '';
+        offers.forEach(o => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                ${o.title} - ${o.desc} (For: ${o.userEmail})
+                <button onclick="editOffer(${o.id})">Edit</button>
+                <button onclick="deleteOffer(${o.id})">Delete</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Edit Offer
+    function editOffer(id) {
+        const offer = offers.find(o => o.id === id);
+        if (offer) {
+            offer.title = prompt('New Title', offer.title) || offer.title;
+            offer.desc = prompt('New Description', offer.desc) || offer.desc;
+            offer.userEmail = prompt('New User Email (or "all")', offer.userEmail) || offer.userEmail;
+            offer.image = prompt('New Image URL', offer.image) || offer.image;
+            localStorage.setItem('offers', JSON.stringify(offers));
+            displayAdminOffers();
+            displaySlider();
+        }
+    }
+
+    // Delete Offer
+    function deleteOffer(id) {
+        offers = offers.filter(o => o.id !== id);
+        localStorage.setItem('offers', JSON.stringify(offers));
+        displayAdminOffers();
+        displaySlider();
+    }
+
+    // Display Slider
+    function displaySlider() {
+        const container = document.getElementById('slider-container');
+        container.innerHTML = '';
+        let applicableOffers = offers.filter(o => o.userEmail === 'all' || (currentUser && o.userEmail === currentUser.email));
+        if (applicableOffers.length === 0) {
+            container.textContent = 'No offers available.';
+            return;
+        }
+        applicableOffers.forEach((o, index) => {
+            const div = document.createElement('div');
+            div.classList.add('slider');
+            div.style.display = index === 0 ? 'block' : 'none';
+            div.innerHTML = `<img src="${o.image}" alt="${o.title}" style="width:400px; height:500px;"><p>${o.title}: ${o.desc}</p>`;
+            container.appendChild(div);
+        });
+        let currentSlide = 0;
+        setInterval(() => {
+            const slides = container.querySelectorAll('.slider');
+            slides[currentSlide].style.display = 'none';
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].style.display = 'block';
+        }, 3000);
+    }
+
+    // Filter Orders
+    function filterOrders(orders, status, date) {
+        let filtered = orders;
+        if (status !== 'all') {
+            filtered = filtered.filter(o => o.status === status);
+        }
+        if (date) {
+            filtered = filtered.filter(o => o.date === date);
+        }
+        return filtered;
+    }
+
+    // Display Orders for Admin
+    function displayOrders(status = 'all', date = '') {
+        const tbody = document.querySelector('#orders-table tbody');
+        tbody.innerHTML = '';
+        const filteredOrders = filterOrders(orders, status, date);
+        filteredOrders.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.date}</td>
+                <td>${order.customer.name}</td>
+                <td>${order.customer.email}</td>
+                <td>${order.customer.phone}</td>
+                <td>${order.customer.address}</td>
+                <td>${order.customer.pincode}</td>
+                <td>${order.items.map(i => `${i.title} (x${i.quantity})`).join(', ')}</td>
+                <td>${order.payment}</td>
+                <td>${order.transactionId || 'N/A'}</td>
+                <td>${order.status}</td>
+                <td>${order.logistics || 'N/A'}</td>
+                <td>${order.trackingId || 'N/A'}</td>
+                <td>${order.cancelRemarks || 'N/A'}</td>
+                <td>
+                    <button onclick="updateOrderStatus(${order.id}, 'Shipped')">Ship</button>
+                    <button onclick="updateOrderStatus(${order.id}, 'Delivered')">Deliver</button>
+                    <button onclick="updateOrderStatus(${order.id}, 'Cancelled')">Cancel</button>
+                    <button onclick="verifyOrder(${order.id})">Verify</button>
+                    <button onclick="deleteOrder(${order.id})">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Delete Order
+    function deleteOrder(id) {
+        if (confirm('Are you sure you want to delete this order?')) {
+            orders = orders.filter(o => o.id !== id);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            displayOrders();
+            displayUserOrders();
+        }
+    }
+
+    // Update Order Status
+    function updateOrderStatus(id, status) {
+        const order = orders.find(o => o.id === id);
+        if (order) {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const captchaAnswer = parseInt(prompt(`What is ${num1} + ${num2}?`));
+            if (captchaAnswer !== num1 + num2) {
+                alert('Incorrect captcha answer!');
+                return;
+            }
+            if (status === 'Shipped') {
+                const logistics = prompt('Enter Logistics Provider Name:');
+                const trackingId = prompt('Enter Tracking ID:');
+                if (logistics && trackingId) {
+                    order.logistics = logistics;
+                    order.trackingId = trackingId;
+                    order.status = status;
+                } else {
+                    alert('Logistics and Tracking ID are required!');
+                    return;
+                }
+            } else if (status === 'Cancelled') {
+                const remarks = prompt('Enter Cancel Remarks:');
+                if (remarks) {
+                    order.cancelRemarks = remarks;
+                    order.status = status;
+                } else {
+                    alert('Remarks are required for cancellation!');
+                    return;
+                }
+            } else {
+                order.status = status;
+            }
+            localStorage.setItem('orders', JSON.stringify(orders));
+            displayOrders();
+            displayUserOrders();
+            displayAnalytics();
+            sendOrderNotification(order, status);
+            showNotification(`Order ${id} status updated to ${status}!`);
+        }
+    }
+
+    // Verify Order
+    function verifyOrder(id) {
+        const order = orders.find(o => o.id === id);
+        if (order) {
+            showNotification(`Order ${id} verified! Transaction ID: ${order.transactionId || 'N/A'}`);
+        }
+    }
+
+    // Export Orders to CSV (filtered)
+    document.getElementById('export-orders').addEventListener('click', () => {
+        const status = document.getElementById('order-status-filter').value;
+        const date = document.getElementById('order-date-filter').value;
+        const filteredOrders = filterOrders(orders, status, date);
+        let csv = 'Order ID,Date,Customer Name,Email,Phone,Address,Pincode,Items,Payment,Transaction ID,Status,Logistics,Tracking ID,Cancel Remarks\n';
+        filteredOrders.forEach(o => {
+            csv += `${o.id},${o.date},${o.customer.name},${o.customer.email},${o.customer.phone},${o.customer.address},${o.customer.pincode},${o.items.map(i => `${i.title} (x${i.quantity})`).join(';')},${o.payment},${o.transactionId || 'N/A'},${o.status},${o.logistics || 'N/A'},${o.trackingId || 'N/A'},${o.cancelRemarks || 'N/A'}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'orders.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // Display Users for Admin
+    function displayUsers(search = '') {
+        const tbody = document.querySelector('#users-table tbody');
+        tbody.innerHTML = '';
+        let filteredUsers = users;
+        if (search) {
+            filteredUsers = filteredUsers.filter(u => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()));
+        }
+        filteredUsers.forEach(u => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${u.name}</td>
+                <td>${u.email}</td>
+                <td>${u.phone}</td>
+                <td>${u.password}</td>
+                <td>
+                    <button onclick="editUser('${u.email}')">Edit</button>
+                    <button onclick="deleteUser('${u.email}')">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Edit User
+    function editUser(email) {
+        const user = users.find(u => u.email === email);
+        if (user) {
+            user.name = prompt('New Name', user.name) || user.name;
+            const newEmail = prompt('New Email', user.email) || user.email;
+            if (newEmail !== user.email && users.some(u => u.email === newEmail)) {
+                alert('Email already exists!');
+                return;
+            }
+            user.email = newEmail;
+            user.phone = prompt('New Phone', user.phone) || user.phone;
+            user.password = prompt('New Password', user.password) || user.password;
+            localStorage.setItem('users', JSON.stringify(users));
+            displayUsers();
+        }
+    }
+
+    // Delete User
+    function deleteUser(email) {
+        if (email === 'admin@dropship.com') {
+            alert('Cannot delete admin account!');
+            return;
+        }
+        users = users.filter(u => u.email !== email);
+        localStorage.setItem('users', JSON.stringify(users));
+        displayUsers();
+    }
+
+    // Filter Users (for export)
+    function filterUsers(users, search) {
+        let filtered = users;
+        if (search) {
+            filtered = filtered.filter(u => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()));
+        }
+        return filtered;
+    }
+
+    // Export Users to CSV (filtered)
+    document.getElementById('export-users').addEventListener('click', () => {
+        const search = document.getElementById('user-search-filter').value;
+        const filteredUsers = filterUsers(users, search);
+        let csv = 'Name,Email,Phone,Password\n';
+        filteredUsers.forEach(u => {
+            csv += `${u.name},${u.email},${u.phone},${u.password}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'users.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // Display Analytics
+    function displayAnalytics() {
+        const today = new Date().toISOString().split('T')[0];
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const weekAgoDate = weekAgo.toISOString().split('T')[0];
+
+        // Daily Sales
+        const dailyOrders = orders.filter(o => o.date === today && o.status === 'Delivered');
+        const dailySales = dailyOrders.reduce((sum, o) => sum + o.items.reduce((s, i) => s + i.price * i.quantity, 0), 0);
+        document.getElementById('daily-sales').textContent = `Daily Sales: ₹${dailySales}`;
+
+        // Weekly Sales
+        const weeklyOrders = orders.filter(o => o.date >= weekAgoDate && o.date <= today && o.status === 'Delivered');
+        const weeklySales = weeklyOrders.reduce((sum, o) => sum + o.items.reduce((s, i) => s + i.price * i.quantity, 0), 0);
+        document.getElementById('weekly-sales').textContent = `Weekly Sales: ₹${weeklySales}`;
+
+        // Best-Selling Products
+        const salesCount = {};
+        orders.filter(o => o.status === 'Delivered').forEach(o => {
+            o.items.forEach(i => {
+                salesCount[i.id] = (salesCount[i.id] || 0) + i.quantity;
+            });
+        });
+        const sorted = Object.entries(salesCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const ul = document.getElementById('best-sellers');
+        ul.innerHTML = '';
+        sorted.forEach(([id, count]) => {
+            const prod = products.find(p => p.id == id);
+            if (prod) {
+                const li = document.createElement('li');
+                li.textContent = `${prod.title}: ${count} sold`;
+                ul.appendChild(li);
+            }
+        });
+    }
+
+    // Display User Orders
+    function displayUserOrders() {
+        const tbody = document.querySelector('#user-orders-table tbody');
+        tbody.innerHTML = '';
+        if (currentUser) {
+            const userOrders = orders.filter(o => o.customer.email === currentUser.email);
+            userOrders.forEach(order => {
+                const total = order.items.reduce((sum, i) => sum + i.price * i.quantity + i.shipping * i.quantity, 0);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.date}</td>
+                    <td>${order.items.map(i => `${i.title} (x${i.quantity})`).join(', ')}</td>
+                    <td>₹${total}</td>
+                    <td>${order.payment}</td>
+                    <td>${order.transactionId || 'N/A'}</td>
+                    <td>${order.status}</td>
+                    <td>${order.logistics || 'N/A'}</td>
+                    <td>${order.trackingId || 'N/A'}</td>
+                    <td>${order.cancelRemarks || 'N/A'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    }
+
+    // Display Reviews
+    function displayReviews(productId) {
+        const container = document.getElementById('product-reviews');
+        container.innerHTML = '';
+        if (reviews[productId]) {
+            reviews[productId].forEach(review => {
+                const div = document.createElement('div');
+                div.innerHTML = `<p>${review.text} - ${review.user} (${new Date(review.date).toLocaleDateString()})</p>`;
+                container.appendChild(div);
+            });
+        }
+        document.getElementById('review-form').onsubmit = (e) => {
+            e.preventDefault();
+            if (currentUser) {
+                const reviewText = document.getElementById('review-text').value;
+                if (!reviews[productId]) reviews[productId] = [];
+                reviews[productId].push({ text: reviewText, user: currentUser.name, date: new Date().toISOString() });
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+                displayReviews(productId);
+                document.getElementById('review-form').reset();
+            } else {
+                alert('Please log in to submit a review!');
+            }
+        };
+    }
+
+    // Show Section
+    function showSection(id) {
+        document.querySelectorAll('section.container').forEach(s => s.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+        if (id === 'catalog') {
+            displayProducts('products', document.getElementById('catalog-search-filter').value, document.getElementById('catalog-category-filter').value, document.getElementById('catalog-price-filter').value);
+        }
+        if (id === 'home') {
+            displayProducts('featured-products', document.getElementById('search-filter').value, document.getElementById('category-filter').value, document.getElementById('price-filter').value);
+        }
+        if (id === 'cart') showCheckout();
+        if (id === 'wishlist') displayWishlist();
+        if (id === 'admin' && isAdmin) {
+            displayAdminProducts(document.getElementById('admin-product-search').value);
+            displayOrders(document.getElementById('order-status-filter').value, document.getElementById('order-date-filter').value);
+            displayUsers(document.getElementById('user-search-filter').value);
+            displayAnalytics();
+            displayAdminOffers();
+        }
+        if (id === 'my-orders') displayUserOrders();
+    }
+
+    // User Filters
+    document.getElementById('search-filter').addEventListener('input', () => showSection('home'));
+    document.getElementById('category-filter').addEventListener('change', () => showSection('home'));
+    document.getElementById('price-filter').addEventListener('change', () => showSection('home'));
+
+    document.getElementById('catalog-search-filter').addEventListener('input', () => showSection('catalog'));
+    document.getElementById('catalog-category-filter').addEventListener('change', () => showSection('catalog'));
+    document.getElementById('catalog-price-filter').addEventListener('change', () => showSection('catalog'));
+
+    // Admin Filters
+    document.getElementById('admin-product-search').addEventListener('input', (e) => displayAdminProducts(e.target.value));
+    document.getElementById('order-status-filter').addEventListener('change', (e) => displayOrders(e.target.value, document.getElementById('order-date-filter').value));
+    document.getElementById('order-date-filter').addEventListener('change', (e) => displayOrders(document.getElementById('order-status-filter').value, e.target.value));
+    document.getElementById('user-search-filter').addEventListener('input', (e) => displayUsers(e.target.value));
+
+    // Payment Method Toggle
+    document.querySelectorAll('input[name="payment"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            displayCart();
+        });
+    });
+
+    // UPI Copy
+    document.getElementById('copy-upi').addEventListener('click', () => {
+        navigator.clipboard.writeText('6304538290@ybl').then(() => {
+            alert('UPI ID copied!');
+        });
+    });
+
+    // Show Notification
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 5000);
+    }
+
+    // Send Order Notification
+    function sendOrderNotification(order, status) {
+        if (currentUser && order.customer.email === currentUser.email) {
+            let message = `Order ${order.id} status updated to ${status}`;
+            if (status === 'Shipped') {
+                message += ` with Tracking ID: ${order.trackingId}`;
+            } else if (status === 'Cancelled') {
+                message += ` with Remarks: ${order.cancelRemarks}`;
+            }
+            showNotification(message);
+        }
+    }
+
+    // Toggle Live Chat
+    function toggleLiveChat() {
+        if (chatOpen) {
+            document.getElementById('live-chat').textContent = 'Live Chat Support';
+            chatOpen = false;
+        } else {
+            document.getElementById('live-chat').textContent = 'Close Chat';
+            alert('Live chat support is now open. Please describe your issue.');
+            chatOpen = true;
+            window.open('https://wa.me/916304538290', '_blank');
+        }
+    }
+
+    // Initial Load
+    showSection('home');
+    populateCategories('category-filter');
+    populateCategories('catalog-category-filter');
+    displayProducts('featured-products');
+    displayProducts('products');
+    displaySlider();
+
+</script>
+
+</body>
+</html>
